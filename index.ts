@@ -8,12 +8,16 @@ dayjs.extend(customParseFormat);
 
 import nagiosParser from "./nagios-parser";
 
-interface Thread {
+export interface Meta {
+  system: string
+}
+
+export interface Thread {
   title: string;
   threadId: string;
   lastReplyDate: string;
   author: string;
-  meta: { [key: string]: any };
+  meta: Meta;
 }
 
 (async () => {
@@ -47,7 +51,7 @@ interface Thread {
     data: [] as Thread[],
   };
 
-  function parseDateString(str) {
+  function parseDateStringToISOString(str: string): string {
     const date = str.split(", ")[1];
     const d = dayjs(date, "D MMMM YYYY HH:mm:ss");
     return d.toISOString();
@@ -62,7 +66,7 @@ interface Thread {
         threadId: "",
         lastReplyDate: "",
         author: "",
-        meta: {},
+        meta: { system: "" },
       };
       const thread = threads[i];
       const titleEl = await thread.$(".thread-title");
@@ -70,7 +74,7 @@ interface Thread {
       const link = await titleEl.$("a");
       data.threadId = await link.evaluate((el) => el.getAttribute("name"));
       const dateEl = await thread.$(".threa-date"); // Yes, the class has a typo
-      data.lastReplyDate = parseDateString(
+      data.lastReplyDate = parseDateStringToISOString(
         await dateEl?.evaluate((el) => el.getAttribute("title"))
       );
       const authorEl = await thread.$(".thread-title+div");
@@ -82,7 +86,7 @@ interface Thread {
       const details = await detailsEl?.evaluate((el) => el.textContent);
 
       if (data.author.includes("nagios")) {
-        data.meta = nagiosParser(details || {});
+        data.meta = nagiosParser(details);
       }
       threadData.push(data);
     }
@@ -108,7 +112,7 @@ interface Thread {
   await browser.close();
 
   console.log("Writing to file");
-  fs.writeFile("data.json", JSON.stringify(json), "utf8", () => {});
+  fs.writeFile("data.json", JSON.stringify(json), "utf8", () => { });
 })();
 
 /**

@@ -1,24 +1,14 @@
-/**
- * @typedef {Object} NagiosData
- * @property {string} type
- * @property {string} service
- * @property {string} state
- * @property {string} date - currently not in ISO format
- */
+import { Meta } from ".";
 
-/**
- * 
- * @param {string} email - email contents
- * @returns {NagiosData}
- */
-export default function parseEmail(email) {
+interface AirflowData extends Meta {
+    type?: "Anomaly" | "SLA Miss" | "Task Failed" | "Unexpected Founds",
+    dag?: string
+    date?: string // currently not in ISO format
+}
+
+export default function parseEmail(email: string) {
     // Create an object to store the parsed data
-    let parsedData = {
-        type: '',
-        service: '',
-        state: '',
-        date: ''
-    };
+    let parsedData: Record<string, string> = {};
 
     // Use a regular expression to match the lines we're interested in
     const typeMatch = email.match(/Notification Type:\s*(.*)/);
@@ -40,5 +30,8 @@ export default function parseEmail(email) {
         parsedData.date = dateMatch[1];
     }
 
-    return parsedData;
+    return {
+        ...parsedData,
+        system: "Airflow"
+    } as AirflowData;
 };
