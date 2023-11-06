@@ -4,6 +4,7 @@ const dayjs = require("dayjs");
 const customParseFormat = require("dayjs/plugin/customParseFormat");
 dayjs.extend(customParseFormat);
 const fs = require("fs");
+import nagiosParser from "./nagios-parser";
 
 (async () => {
   const browser = await puppeteer.launch({ headless: true });
@@ -32,7 +33,7 @@ const fs = require("fs");
     data: [],
   };
 
-  function parseString(str) {
+  function parseDateString(str) {
     const date = str.split(", ")[1];
     const d = dayjs(date, "D MMMM YYYY HH:mm:ss");
     return d.toISOString();
@@ -42,25 +43,34 @@ const fs = require("fs");
     const threadData = [];
     const threads = await page.$$(".thread");
     for (let i = 0; i < threads.length; i++) {
+      const data = {
+        title: "",
+        threadId: "",
+        lastReplyDate: "",
+        author: "",
+        meta: {},
+      };
       const thread = threads[i];
       const titleEl = await thread.$(".thread-title");
-      const title = (await titleEl?.evaluate((el) => el.textContent)).trim();
+      data.title = (await titleEl?.evaluate((el) => el.textContent)).trim();
       const link = await titleEl.$("a");
-      const threadId = await link.evaluate((el) => el.getAttribute("name"));
+      data.threadId = await link.evaluate((el) => el.getAttribute("name"));
       const dateEl = await thread.$(".threa-date"); // Yes, the class has a typo
-      const date = parseString(
+      data.lastReplyDate = parseDateString(
         await dateEl?.evaluate((el) => el.getAttribute("title"))
       );
-      const byEl = await thread.$(".thread-title+div");
-      const author = await byEl?.evaluate((el) =>
-        el.textContent.split("by ")[1].trim()
-      );
-      threadData.push({
-        title,
-        threadId,
-        lastReplyDate: date,
-        author,
-      });
+      const authorEl = await thread.$(".thread-title+div");
+      data.author =
+        (await authorEl?.evaluate((el) =>
+          el.textContent.split("by ")[1].trim()
+        )) || "";
+      const detailsEl = await thread.$(".thread-title+div");
+      const details = await detailsEl?.evaluate((el) => el.textContent);
+
+      if (data.author.contains("nagios")) {
+        data.meta = nagiosParser(details || {});
+      }
+      threadData.push(data);
     }
     return threadData;
   }
