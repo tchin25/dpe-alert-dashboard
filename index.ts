@@ -1,12 +1,26 @@
-const puppeteer = require("puppeteer");
-require("dotenv/config");
-const dayjs = require("dayjs");
-const customParseFormat = require("dayjs/plugin/customParseFormat");
+import "dotenv/config";
+
+import puppeteer from "puppeteer";
+import fs from "fs";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-const fs = require("fs");
+
 import nagiosParser from "./nagios-parser";
 
+interface Thread {
+  title: string;
+  threadId: string;
+  lastReplyDate: string;
+  author: string;
+  meta: { [key: string]: any };
+}
+
 (async () => {
+  if (!process.env.EMAIL_USERNAME || !process.env.EMAIL_PASSWORD) {
+    return;
+  }
+
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   // Default timezone is either set by account or is local time
@@ -30,7 +44,7 @@ import nagiosParser from "./nagios-parser";
   );
 
   const json = {
-    data: [],
+    data: [] as Thread[],
   };
 
   function parseDateString(str) {
@@ -40,10 +54,10 @@ import nagiosParser from "./nagios-parser";
   }
 
   async function getThreadsDataFromPage(page) {
-    const threadData = [];
+    const threadData: Thread[] = [];
     const threads = await page.$$(".thread");
     for (let i = 0; i < threads.length; i++) {
-      const data = {
+      const data: Thread = {
         title: "",
         threadId: "",
         lastReplyDate: "",
@@ -67,7 +81,7 @@ import nagiosParser from "./nagios-parser";
       const detailsEl = await thread.$(".thread-title+div");
       const details = await detailsEl?.evaluate((el) => el.textContent);
 
-      if (data.author.contains("nagios")) {
+      if (data.author.includes("nagios")) {
         data.meta = nagiosParser(details || {});
       }
       threadData.push(data);
@@ -77,7 +91,7 @@ import nagiosParser from "./nagios-parser";
 
   const pageLinks = await page.$$("a.page-link");
   const lastPage = await pageLinks[pageLinks.length - 2].evaluate((el) =>
-    parseInt(el.textContent)
+    parseInt(el.textContent || "1")
   );
   console.log(`Last Page: ${lastPage}`);
   json.data.push(...(await getThreadsDataFromPage(page)));
@@ -96,3 +110,7 @@ import nagiosParser from "./nagios-parser";
   console.log("Writing to file");
   fs.writeFile("data.json", JSON.stringify(json), "utf8", () => {});
 })();
+
+/**
+ * modeling for tables hopefully can be simliar data model as prometheus and druid: metric_name: string, labels Map<string, string>, value.
+ */
