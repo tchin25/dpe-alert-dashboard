@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import "primevue/resources/themes/lara-light-teal/theme.css?inline";
 import dayjs from "dayjs";
-import { CdxCard } from "@wikimedia/codex";
+import { CdxCard, CdxCheckbox } from "@wikimedia/codex";
 import type { Thread } from "~/server/api/query.get";
 
 const calendarStartTime = ref(dayjs().subtract(3, "d").toDate());
@@ -33,6 +33,24 @@ const calendarModel = computed({
     }
   },
 });
+
+const tags = computed(() => {
+  const tagsSet = new Set<string>();
+
+  results.value.forEach((thread) => {
+    thread.tags.forEach((tag) => {
+      tagsSet.add(tag);
+    });
+  });
+
+  return Array.from(tagsSet);
+});
+
+const filteredResults = computed(() => {
+    return results.value.filter(thread => {
+
+    })
+})
 </script>
 <template>
   <div class="grid grid-cols-9 h-screen w-screen gap-2">
@@ -53,6 +71,10 @@ const calendarModel = computed({
         class=""
         style="border: var(--border-base)"
       />
+      <h1 class="font-bold text-xl py-2">Tags</h1>
+      <div>
+        <cdx-checkbox v-for="tag in tags" :key="tag">{{ tag }}</cdx-checkbox>
+      </div>
       <h1 class="font-bold text-xl py-2">Threads</h1>
       <div class="flex flex-col max-w-full gap-2">
         <ClientOnly>
@@ -81,7 +103,6 @@ const calendarModel = computed({
           :data="results"
           class="col-span-full row-span-2"
         ></AlertFrequencyChart>
-
         <AuthorPostPieChart
           :data="results"
           class="col-span-3 row-span-2"

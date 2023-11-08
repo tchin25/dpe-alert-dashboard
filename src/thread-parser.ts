@@ -9,7 +9,7 @@ export interface Thread {
   threadId: string;
   details?: string; // May not be the full content of the email
   estimatedPostDate: string; // Defaults to lastReplyDate
-  lastReplyDate: string;
+  lastReplyDate: string; // Last reply date as of when the web scrape happens
   author: string;
   system?: System;
   severity?: Severity;
