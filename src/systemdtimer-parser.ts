@@ -1,6 +1,6 @@
 import { Thread, ThreadParser } from "./thread-parser";
 
-export default class extends ThreadParser {
+export default class SystemdtimerParser extends ThreadParser {
   isParseable(thread: Thread): boolean {
     return thread.author.includes("SYSTEMDTIMER");
   }

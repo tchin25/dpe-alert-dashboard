@@ -1,6 +1,10 @@
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+dayjs.extend(customParseFormat);
+
 import { Thread, ThreadParser } from "./thread-parser";
 
-export default class extends ThreadParser {
+export default class NagiosParser extends ThreadParser {
   isParseable(thread: Thread): boolean {
     return thread.author.includes("nagios");
   }
@@ -27,8 +31,7 @@ export default class extends ThreadParser {
       parsedData.tags.push(stateMatch[1]);
     }
     if (dateMatch) {
-      // TODO: Parse
-      //   parsedData.estimatedPostDate = dateMatch[1];
+      parsedData.estimatedPostDate = dayjs(dateMatch[1]).toISOString();
     }
 
     return {

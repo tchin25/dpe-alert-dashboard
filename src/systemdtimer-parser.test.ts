@@ -1,7 +1,7 @@
 import SystemdtimerParser from "./systemdtimer-parser";
 
 test("Parses process and time correctly", () => {
-    const str = `
+  const str = `
     Systemd timer ran the following command:
 
     /usr/local/bin/kerberos-run-command analytics /usr/local/bin/produce_canary_events
@@ -21,11 +21,11 @@ Config(
     "https://schema.discovery.wmnet/repositories/primary/jsonschema", 
     "https://schema.discovery.wmnet/repositories/secondary/jsonschema"
   ),
-    `
+    `;
 
-    const systemdtimerParser = new SystemdtimerParser()
-    expect(systemdtimerParser._extractInfo(str)).toMatchObject({
-        process: "produce_canary_events",
-        time: "2023-11-07T04:30:07.579"
-    });
+  const systemdtimerParser = new SystemdtimerParser();
+  expect(systemdtimerParser._extractInfo(str)).toMatchObject({
+    process: "produce_canary_events",
+    time: "2023-11-07T04:30:07.579",
   });
+});

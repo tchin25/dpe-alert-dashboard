@@ -11,7 +11,7 @@ const AirflowAlertTypes = [
 
 type AirflowAlertType = (typeof AirflowAlertTypes)[number];
 
-export default class extends ThreadParser {
+export default class AirflowParser extends ThreadParser {
   isParseable(thread: Thread): boolean {
     return thread.author.includes("airflow-analytics");
   }
@@ -23,35 +23,31 @@ export default class extends ThreadParser {
     };
 
     /**
-     * Airflow alerts have .htm content instead of text,
+     * Airflow alerts have an .htm file as its contents instead of text,
      * which we do not currently parse.
      */
-    let alert: AirflowAlertType = "unknown";
-    for (const airflowAlertType of AirflowAlertTypes) {
-      if (thread.title.includes(airflowAlertType)) {
-        parsedData.tags.push(airflowAlertType);
-        alert = airflowAlertType;
+    let alert: AirflowAlertType = this._getAirflowAlertType(thread.title);
+    parsedData.tags.push(alert);
+
+    switch (alert) {
+      case "SLA Miss":
+      case "Task Failed":
+      case "Data Loss":
+        parsedData.severity = "high";
         break;
-      }
+      case "Unexpected Found":
+        parsedData.severity = "medium";
+        break;
+      case "Anomaly":
+      default:
+        parsedData.severity = "low";
+        break;
     }
 
-    if (thread.title.includes("Anomaly")) {
-    } else if (thread.title.includes("SLA miss")) {
-    } else if (thread.title.includes(""))
-      switch (alert) {
-        case "SLA Miss":
-        case "Task Failed":
-        case "Data Loss":
-          parsedData.severity = "high";
-          break;
-        case "Unexpected Found":
-          parsedData.severity = "medium";
-          break;
-        case "Anomaly":
-        default:
-          parsedData.severity = "low";
-          break;
-      }
+    const dag = this._extractDagName(thread.title);
+    if (dag) {
+      parsedData.tags.push(dag);
+    }
 
     return {
       ...thread,
@@ -59,17 +55,38 @@ export default class extends ThreadParser {
     };
   }
 
-  _extractDagName(str: string) {
-    // This regular expression looks for a sequence of word characters (alphanumeric and underscores)
-    // followed by a non-word character like a space, period, or bracket. It captures the word characters.
-    const dagNamePattern = /(\b\w+)\b(?=[ .[\](){}])/g;
+  _getAirflowAlertType(str: string): AirflowAlertType {
+    if (str.includes("[failed]")) {
+      return "Task Failed";
+    }
+    if (str.includes("Anomaly report")) {
+      return "Anomaly";
+    }
+    if (str.includes("Unexpected found")) {
+      return "Unexpected Found";
+    }
+    if (str.includes("SLA miss")) {
+      return "SLA Miss";
+    }
+    if (str.includes("Data Loss ERROR")) {
+      return "Data Loss";
+    }
+
+    return "unknown";
+  }
+
+  _extractDagName(str: string): string | null {
+    // This regular expression looks for a word that may optionally be
+    // preceded by 'DAG=' and followed by a space, period, end of line, or bracket.
+    const dagNamePattern = /(?:DAG=)?(\b\w+)\b(?=[ .\]\n\r]|$)/g;
 
     let match;
     let dagNames = [];
 
     // Use RegExp.exec in a loop to find multiple matches in the input string
     while ((match = dagNamePattern.exec(str)) !== null) {
-      // Avoid capturing known words that precede a DAG name in your context
+      // Avoid capturing known words that precede a DAG name
+      // TODO: This is terribly brittle
       const nonDagKeywords = [
         "TaskInstance",
         "DAG",
@@ -81,11 +98,13 @@ export default class extends ThreadParser {
         "Unexpected",
         "found",
         "in",
+        "on",
         "hourly",
         "Data",
         "Loss",
         "ERROR",
         "Airflow",
+        "airflow",
         "Analytics",
       ];
 
@@ -95,6 +114,6 @@ export default class extends ThreadParser {
       }
     }
 
-    return dagNames.length > 0 ? dagNames[0] : "";
+    return dagNames.length > 0 ? dagNames[0] : null;
   }
 }
