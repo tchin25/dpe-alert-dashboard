@@ -6,12 +6,14 @@ import { Thread, ThreadParser } from "./thread-parser";
 import AirflowParser from "./airflow-parser";
 import NagiosParser from "./nagios-parser";
 import SystemdtimerParser from "./systemdtimer-parser";
+import PrometheusParser from "./prometheus-parser";
 dayjs.extend(customParseFormat);
 
 const parsers: ThreadParser[] = [
   new AirflowParser(),
   new NagiosParser(),
   new SystemdtimerParser(),
+  new PrometheusParser(),
 ];
 
 export default class ThreadProcessor {

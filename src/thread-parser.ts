@@ -1,4 +1,4 @@
-export const Systems = ["nagios", "airflow", "systemd"] as const;
+export const Systems = ["nagios", "airflow", "systemd", "prometheus"] as const;
 
 export type System = (typeof Systems)[number];
 
