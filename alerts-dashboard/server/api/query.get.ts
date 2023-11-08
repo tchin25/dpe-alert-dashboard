@@ -1,13 +1,10 @@
 // Placeholder for data we'd fetch from a DB
 // Note: Unsorted
 import archiveData from "./data.json";
+import { Thread } from "../../../src/thread-parser";
 
-export interface Thread {
-  title: string;
-  threadId: string;
-  lastReplyDate: string;
-  author: string;
-}
+// Re-export types
+export { Thread } from "../../../src/thread-parser";
 
 let { data } = archiveData as { data: Thread[] };
 data = data.sort(

@@ -34,12 +34,12 @@ interface SystemsCount {
 
 const systemsCount = computed(() => {
   return props.data.reduce((acc, item) => {
-    const existingEntry = acc.find((entry) => entry.name === item.author);
+    const existingEntry = acc.find((entry) => entry.name === item.system);
 
     if (existingEntry) {
       existingEntry.value += 1;
     } else {
-      acc.push({ value: 1, name: item.author });
+      acc.push({ value: 1, name: item.system || "unknown" });
     }
 
     return acc;

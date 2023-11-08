@@ -50,14 +50,14 @@ import ThreadProcessor from "./thread-processor";
   console.log(`Last Page: ${lastPage}`);
   json.data.push(...(await threadProcessor.getThreadsDataFromPage(page)));
 
-  // for (let i = 2; i <= lastPage; i++) {
-  //   console.log(`Processing Page: ${i}`);
-  //   await page.goto(
-  //     `https://lists.wikimedia.org/hyperkitty/list/data-engineering-alerts@lists.wikimedia.org/latest?page=${i}`
-  //   );
+  for (let i = 2; i <= 30; i++) {
+    console.log(`Processing Page: ${i}`);
+    await page.goto(
+      `https://lists.wikimedia.org/hyperkitty/list/data-engineering-alerts@lists.wikimedia.org/latest?page=${i}`
+    );
 
-  //   json.data.push(...(await threadProcessor.getThreadsDataFromPage(page)));
-  // }
+    json.data.push(...(await threadProcessor.getThreadsDataFromPage(page)));
+  }
 
   await browser.close();
 

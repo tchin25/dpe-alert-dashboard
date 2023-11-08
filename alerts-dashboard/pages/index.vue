@@ -86,6 +86,10 @@ const calendarModel = computed({
           :data="results"
           class="col-span-3 row-span-2"
         ></AuthorPostPieChart>
+        <SystemsPieChart
+          :data="results"
+          class="col-span-3 row-span-2"
+        ></SystemsPieChart>
       </ClientOnly>
     </div>
   </div>
