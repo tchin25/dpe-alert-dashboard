@@ -8,8 +8,16 @@ export interface Thread {
   title: string;
   threadId: string;
   details?: string; // May not be the full content of the email
-  estimatedPostDate: string; // Defaults to lastReplyDate
-  lastReplyDate: string; // Last reply date as of when the web scrape happens
+  /**
+   * Defaults to lastReplyDate.
+   * If writing a parser to get this that uses dayjs, remember to put it in UTC mode.
+   */
+  estimatedPostDate: string;
+  /**
+   * Last post date in the thread when the web scrape happened.
+   * TODO: see what timezone this is in
+   */
+  lastReplyDate: string;
   author: string;
   system?: System;
   severity?: Severity;

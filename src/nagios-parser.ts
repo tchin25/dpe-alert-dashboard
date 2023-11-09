@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
+import utc from "dayjs/plugin/utc";
 dayjs.extend(customParseFormat);
+dayjs.extend(utc);
 
 import { Thread, ThreadParser } from "./thread-parser";
 
@@ -31,7 +33,7 @@ export default class NagiosParser extends ThreadParser {
       parsedData.tags.push(stateMatch[1]);
     }
     if (dateMatch) {
-      parsedData.estimatedPostDate = dayjs(dateMatch[1]).toISOString();
+      parsedData.estimatedPostDate = dayjs(dateMatch[1]).utc(true).toISOString();
     }
 
     return {

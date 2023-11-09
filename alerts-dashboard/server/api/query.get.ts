@@ -9,7 +9,7 @@ export { Thread } from "../../../src/thread-parser";
 let { data } = archiveData as { data: Thread[] };
 data = data.sort(
   (a, b) =>
-    new Date(b.lastReplyDate).getTime() - new Date(a.lastReplyDate).getTime()
+    new Date(b.estimatedPostDate).getTime() - new Date(a.estimatedPostDate).getTime()
 );
 
 export default defineEventHandler((event): { results: Thread[] } => {
@@ -25,7 +25,7 @@ export default defineEventHandler((event): { results: Thread[] } => {
 
   return {
     results: data.filter((item) => {
-      const date = new Date(item.lastReplyDate);
+      const date = new Date(item.estimatedPostDate);
       return date >= startDate && date <= endDate;
     }),
   };

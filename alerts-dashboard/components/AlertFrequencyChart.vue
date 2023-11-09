@@ -4,6 +4,7 @@ import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { LineChart } from "echarts/charts";
 import {
+  DataZoomComponent,
   TitleComponent,
   TooltipComponent,
   LegendComponent,
@@ -27,6 +28,7 @@ use([
   TooltipComponent,
   LegendComponent,
   GridComponent,
+  DataZoomComponent,
 ]);
 
 interface ThreadCountByDay {
@@ -40,7 +42,7 @@ const threadCount = computed(() => {
     // const date = item.lastReplyDate.split("T")[0];
 
     // Extract the YYYY-MM-DDTHH from the ISO date string
-    const date = item.lastReplyDate.substring(0, 13);
+    const date = item.estimatedPostDate.substring(0, 13);
 
     const existingEntry = acc.find((entry) => entry.date === date);
 
@@ -64,6 +66,11 @@ const option = computed(() => {
       trigger: "item",
       formatter: "{c}",
     },
+    dataZoom: [
+      {
+        type: "slider",
+      }
+    ],
     xAxis: { type: "time" },
     yAxis: {},
     series: [
