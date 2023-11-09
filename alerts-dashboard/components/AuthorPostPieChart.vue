@@ -75,5 +75,18 @@ const option = computed(() => {
 });
 </script>
 <template>
-  <v-chart :option="option" :update-options="{ notMerge: false }" autoresize />
+  <div class="flex flex-col">
+    <div class="h-64">
+      <v-chart
+        :option="option"
+        :update-options="{ notMerge: false }"
+      />
+    </div>
+    <div class="grow-0">
+      <DataTable size="small" scrollable :value="authorPostCount" tableStyle="">
+        <Column field="name" header="Author"></Column>
+        <Column field="value" header="Count"></Column>
+      </DataTable>
+    </div>
+  </div>
 </template>

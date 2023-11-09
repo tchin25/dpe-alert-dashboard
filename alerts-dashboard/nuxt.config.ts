@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   },
   primevue: {
     components: {
-      include: ["Calendar"],
+      include: ["Calendar", "DataTable", "Column"],
     },
   },
 });

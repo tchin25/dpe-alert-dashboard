@@ -62,9 +62,9 @@ const filteredResults = computed(() => {
 });
 </script>
 <template>
-  <div class="grid grid-cols-9 h-screen w-screen gap-2">
+  <div class="grid grid-cols-9 h-screen w-screen gap-2 overflow-x-hidden">
     <aside
-      class="col-span-2 p-4 max-h-screen overflow-y-auto"
+      class="col-span-2 p-4 max-h-screen overflow-y-auto overflow-x-hidden"
       style="
         border-right: var(--border-width-base) var(--border-style-base)
           var(--border-color-subtle);
@@ -124,11 +124,11 @@ const filteredResults = computed(() => {
         ></AlertFrequencyChart>
         <AuthorPostPieChart
           :data="filteredResults"
-          class="col-span-3 row-span-2"
+          class="col-span-3 row-span-3"
         ></AuthorPostPieChart>
         <SystemsPieChart
           :data="filteredResults"
-          class="col-span-3 row-span-2"
+          class="col-span-3 row-span-3"
         ></SystemsPieChart>
       </ClientOnly>
     </div>
