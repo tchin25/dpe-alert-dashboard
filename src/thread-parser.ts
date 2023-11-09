@@ -10,7 +10,7 @@ export interface Thread {
   details?: string; // May not be the full content of the email
   /**
    * Defaults to lastReplyDate.
-   * If writing a parser to get this that uses dayjs, remember to put it in UTC mode.
+   * Be care of timezones when writing parsers.
    */
   estimatedPostDate: string;
   /**

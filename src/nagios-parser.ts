@@ -33,7 +33,7 @@ export default class NagiosParser extends ThreadParser {
       parsedData.tags.push(stateMatch[1]);
     }
     if (dateMatch) {
-      parsedData.estimatedPostDate = dayjs(dateMatch[1]).utc(true).toISOString();
+      parsedData.estimatedPostDate = dayjs(dateMatch[1]).toISOString();
     }
 
     return {

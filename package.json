@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "scrape": "node dist/index.js",
     "test": "jest"
   },
   "author": "",

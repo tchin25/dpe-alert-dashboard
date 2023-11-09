@@ -8,7 +8,7 @@ import {
   LegendComponent,
 } from "echarts/components";
 import VChart from "vue-echarts";
-import { ref, provide } from "vue";
+import { ref } from "vue";
 
 use([
   CanvasRenderer,

@@ -80,18 +80,20 @@ const filteredResults = computed(() => {
         class=""
         style="border: var(--border-base)"
       />
-      <div role="group" aria-labelledby="tag-checkboxes">
-        <cdx-label id="tag-checkboxes">
-          <h1 class="font-bold text-xl py-2">Tags</h1>
-        </cdx-label>
-        <cdx-checkbox
-          v-for="tag in tags"
-          :key="tag"
-          :input-value="tag"
-          v-model="tagCheckboxValues"
-          >{{ tag }}</cdx-checkbox
-        >
-      </div>
+      <ClientOnly>
+        <div role="group" aria-labelledby="tag-checkboxes">
+          <cdx-label id="tag-checkboxes">
+            <h1 class="font-bold text-xl py-2">Tags</h1>
+          </cdx-label>
+          <cdx-checkbox
+            v-for="tag in tags"
+            :key="tag"
+            :input-value="tag"
+            v-model="tagCheckboxValues"
+            >{{ tag }}</cdx-checkbox
+          >
+        </div>
+      </ClientOnly>
       <h1 class="font-bold text-xl py-2">Threads</h1>
       <div class="flex flex-col max-w-full gap-2">
         <ClientOnly>

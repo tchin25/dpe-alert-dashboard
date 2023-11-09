@@ -42,7 +42,7 @@ const threadCount = computed(() => {
     // const date = item.lastReplyDate.split("T")[0];
 
     // Extract the YYYY-MM-DDTHH from the ISO date string
-    const date = item.estimatedPostDate.substring(0, 13);
+    const date = item.lastReplyDate.substring(0, 13);
 
     const existingEntry = acc.find((entry) => entry.date === date);
 
