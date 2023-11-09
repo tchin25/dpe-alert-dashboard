@@ -116,7 +116,7 @@ const filteredResults = computed(() => {
         </ClientOnly>
       </div>
     </aside>
-    <div class="min-h-fit col-span-7 p-4 grid grid-cols-6 grid-rows-6 gap-4">
+    <div class="min-h-fit col-span-7 p-4 grid grid-cols-6 grid-rows-6 gap-4 max-h-screen overflow-y-auto overflow-x-hidden">
       <ClientOnly>
         <AlertFrequencyChart
           :data="filteredResults"
