@@ -1,10 +1,33 @@
 // Placeholder for data we'd fetch from a DB
 // Note: Unsorted
 import archiveData from "./data.json";
-import { Thread } from "../../../src/thread-parser";
 
-// Re-export types
-export { Thread } from "../../../src/thread-parser";
+//TODO: Figure out how to include these types from the web scraper
+export const Systems = ["nagios", "airflow", "systemd", "prometheus"] as const;
+
+export type System = (typeof Systems)[number];
+
+export type Severity = "high" | "medium" | "low";
+
+export interface Thread {
+  title: string;
+  threadId: string;
+  details?: string; // May not be the full content of the email
+  /**
+   * Defaults to lastReplyDate.
+   * Be care of timezones when writing parsers.
+   */
+  estimatedPostDate: string;
+  /**
+   * Last post date in the thread when the web scrape happened.
+   * TODO: see what timezone this is in
+   */
+  lastReplyDate: string;
+  author: string;
+  system?: System;
+  severity?: Severity;
+  tags: string[]
+}
 
 let { data } = archiveData as { data: Thread[] };
 data = data.sort(

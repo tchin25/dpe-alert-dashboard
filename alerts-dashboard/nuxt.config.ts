@@ -5,4 +5,9 @@ export default defineNuxtConfig({
   build: {
     transpile: [/echarts/],
   },
+  primevue: {
+    components: {
+      include: ["Calendar"],
+    },
+  },
 });
