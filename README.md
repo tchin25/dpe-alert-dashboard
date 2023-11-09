@@ -12,7 +12,7 @@ EMAIL_PASSWORD=
 
 3. 
 ```bash
-yarn build
+npm run build
 node dist/index.js
 ```
 
