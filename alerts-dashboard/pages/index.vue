@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import "primevue/resources/themes/lara-light-teal/theme.css?inline";
 import dayjs from "dayjs";
-import { CdxCard, CdxCheckbox } from "@wikimedia/codex";
+import { CdxCard, CdxCheckbox, CdxLabel } from "@wikimedia/codex";
 import type { Thread } from "~/server/api/query.get";
 
 const calendarStartTime = ref(dayjs().subtract(3, "d").toDate());
@@ -46,11 +46,20 @@ const tags = computed(() => {
   return Array.from(tagsSet);
 });
 
-const filteredResults = computed(() => {
-    return results.value.filter(thread => {
+const tagCheckboxValues = ref<string[]>([]);
 
-    })
-})
+const filteredResults = computed(() => {
+  if (tagCheckboxValues.value.length == 0) {
+    return results.value;
+  }
+  return results.value.filter((thread) => {
+    for (const tag of thread.tags) {
+      if (tagCheckboxValues.value.includes(tag)) {
+        return true;
+      }
+    }
+  });
+});
 </script>
 <template>
   <div class="grid grid-cols-9 h-screen w-screen gap-2">
@@ -71,15 +80,23 @@ const filteredResults = computed(() => {
         class=""
         style="border: var(--border-base)"
       />
-      <h1 class="font-bold text-xl py-2">Tags</h1>
-      <div>
-        <cdx-checkbox v-for="tag in tags" :key="tag">{{ tag }}</cdx-checkbox>
+      <div role="group" aria-labelledby="tag-checkboxes">
+        <cdx-label id="tag-checkboxes">
+          <h1 class="font-bold text-xl py-2">Tags</h1>
+        </cdx-label>
+        <cdx-checkbox
+          v-for="tag in tags"
+          :key="tag"
+          :input-value="tag"
+          v-model="tagCheckboxValues"
+          >{{ tag }}</cdx-checkbox
+        >
       </div>
       <h1 class="font-bold text-xl py-2">Threads</h1>
       <div class="flex flex-col max-w-full gap-2">
         <ClientOnly>
           <cdx-card
-            v-for="thread in results"
+            v-for="thread in filteredResults"
             :key="thread.threadId"
             :url="`https://lists.wikimedia.org/hyperkitty/list/data-engineering-alerts@lists.wikimedia.org/thread/${thread.threadId}/`"
             class="block"
@@ -100,15 +117,15 @@ const filteredResults = computed(() => {
     <div class="min-h-fit col-span-7 p-4 grid grid-cols-6 grid-rows-6 gap-4">
       <ClientOnly>
         <AlertFrequencyChart
-          :data="results"
+          :data="filteredResults"
           class="col-span-full row-span-2"
         ></AlertFrequencyChart>
         <AuthorPostPieChart
-          :data="results"
+          :data="filteredResults"
           class="col-span-3 row-span-2"
         ></AuthorPostPieChart>
         <SystemsPieChart
-          :data="results"
+          :data="filteredResults"
           class="col-span-3 row-span-2"
         ></SystemsPieChart>
       </ClientOnly>
