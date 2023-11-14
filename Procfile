@@ -1,1 +1,1 @@
-scrape: npm install && npm run build && npm run scrape
+scrape: npm run scrape
