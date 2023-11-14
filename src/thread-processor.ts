@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import * as puppeteer from "puppeteer";
+import playwright from "playwright";
 
 import { Thread, ThreadParser } from "./thread-parser";
 import AirflowParser from "./airflow-parser";
@@ -23,7 +23,7 @@ export default class ThreadProcessor {
     return d.toISOString();
   }
 
-  async getThreadsDataFromPage(page: puppeteer.Page) {
+  async getThreadsDataFromPage(page: playwright.Page) {
     const threadData: Thread[] = [];
     const threads = await page.$$(".thread");
     for (let i = 0; i < threads.length; i++) {

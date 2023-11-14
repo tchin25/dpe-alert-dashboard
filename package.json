@@ -17,7 +17,7 @@
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "mysql2": "^3.6.3",
-    "puppeteer": "^21.4.1"
+    "playwright": "^1.39.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.7",
