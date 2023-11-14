@@ -7,9 +7,8 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "build": "npx playwright install chromium && tsc",
     "compile": "tsc",
-    "scrape": "node dist/index.js",
+    "scrape": "npx playwright install chromium && tsc && node dist/index.js",
     "test": "jest"
   },
   "author": "",
